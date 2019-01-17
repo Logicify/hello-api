@@ -1,5 +1,8 @@
 """
 Production Environment Settings
+
+WARNING!!! DO NOT PUT ANY SENSITIVE INFORMATION INTO THIS CONFIG FILE!!!
+Source any sensitive data through environment variables instead
 """
 import dj_database_url
 
