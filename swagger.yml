@@ -1,0 +1,123 @@
+openapi: "3.0.0"
+info:
+  title: Hello API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /:
+    get:
+      operationId: simpleHello
+      summary: Just says hello
+      responses:
+        '200':
+          description: Succesful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+
+  /hello/{slug}:
+    get:
+      operationId: helloWithSlug
+      summary: Says hello to given slug
+      parameters:
+        - name: slug
+          in: path
+          description: Who\what to say hello to
+          required: true
+          schema:
+            type: string
+          example: world
+      responses:
+        '200':
+          description: Succesful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+
+  /post:
+    post:
+      operationId: postData
+      summary: Echo service, returns back what you have sent it
+      description: Supports raw POST data, URL-encoded forms as well as text file uploads
+      requestBody:
+        content:
+          text/*:
+            schema:
+              type: string
+            example: Hello world!
+          application/x-www-form-urlencoded:
+            schema:
+              type: string
+            example:
+              slash: will be / url encoded on request
+              line_break: as
+
+                well
+      responses:
+        '200':
+          description: Succesful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+        '400':
+          description: Something which is not a string was posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+              example:
+                payload: null
+                service:
+                  error_code: 400
+                  node_id: server-node
+                  error_message: Cannot convert POST data to string
+                  validation_errors: []
+                  successful: false
+                  api_version: 1.0.0
+
+
+components:
+  schemas:
+    HelloResponseDto:
+      properties:
+        message:
+          type: string
+          example: 'Hello'
+
+    HelloResponse:
+      properties:
+        payload:
+          $ref: '#/components/schemas/HelloResponseDto'
+        service:
+          $ref: '#/components/schemas/ServiceSection'
+
+    ServiceSection:
+      properties:
+        error_code:
+          type: integer
+          description: Operation error code
+        node_id:
+          type: string
+          description: Node ID (usually hostname) of server which handled request
+          example: 'server-node'
+        error_message:
+          type: string
+          description: Human readable error message
+          example: null
+        validation_errors:
+          type: array
+          description: Array of field validation errors
+          items:
+            type: object
+          example: []
+        successful:
+          type: boolean
+          description: Flag indicating if request completed successfully
+        api_version:
+          type: string
+          description: Current version of API
+          example: '1.0.0'
